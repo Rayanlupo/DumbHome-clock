@@ -5,30 +5,51 @@ TM1637 display(27, 14);
 int buttonPin = 35;
 int hours;
 int minutes;
+int show;
+int on;
+
 void setup() {
   Serial.begin(115200);
+  pinMode(buttonPin, INPUT_PULLUP);
   rtc.begin();
   display.set(); 
   display.init(); 
-   if (rtc.begin() = false) {
-    Serial.println("Couldn't find RTC");
+   if (!rtc.begin()) {
+    Serial.println("RTC not found");
   }
   if (rtc.isrunning() == false) {
-    Serial.println("RTC is NOT running!");
+    Serial.println("RTC is not running");
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__))); 
   }
+  display.set(7);
+
 
 }
 
 void loop() {
+
 DateTime now = rtc.now();
-hours = (now.hour(), DEC);
-int minutes = (now.minute(), DEC);
+hours = (now.hour());
+int minutes = (now.minute());
 Serial.print(hours);
 Serial.print(":");
 Serial.print(minutes);
-time = hours * 100 + minutes;
-tm.display(time);
+displayTime(hours, minutes);   
 delay(1000);
 
-
 }
+
+
+void displayTime(int hours, int minutes) {
+  int8_t displayData[4];
+
+
+  displayData[0] = hours / 10;
+  displayData[1] = hours % 10;
+  displayData[2] = minutes / 10;
+  displayData[3] = minutes % 10;
+
+
+  display.display(displayData);
+}
+
